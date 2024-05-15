@@ -37,3 +37,7 @@ pub struct Position {
     pub x: i32,
     pub y: i32,
 }
+
+#[derive(Default)]
+pub struct Score(pub u32);
+impl Resource for Score {}

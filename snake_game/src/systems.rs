@@ -23,6 +23,7 @@ fn setup(
     commands.insert_resource(SnakeTextures { head: snake_head_handle.clone(), food: food_handle.clone() });
     commands.insert_resource(LastTailPosition::default());
     commands.insert_resource(SnakeSegments(vec![]));
+    commands.insert_resource(Score::default());
 
     spawn_snake(&mut commands, snake_head_handle);
     spawn_food(&mut commands, food_handle);
@@ -118,6 +119,7 @@ fn snake_eating(
     head_positions: Query<(&Transform, &Position), With<SnakeHead>>,
     mut last_tail_position: ResMut<LastTailPosition>,
     textures: Res<SnakeTextures>,
+    mut score: ResMut<Score>,
 ) {
     for (_, head_position) in head_positions.iter() {
         for (entity, food_position) in food_positions.iter() {
@@ -125,6 +127,8 @@ fn snake_eating(
                 commands.entity(entity).despawn();
                 last_tail_position.0 = Some(*food_position);
                 spawn_food(&mut commands, textures.food.clone());
+                score.0 += 1;
+                println!("Score: {}", score.0);
             }
         }
     }
@@ -161,7 +165,6 @@ fn game_over(
     segment_positions: Query<&Position, With<SnakeSegment>>,
     textures: Res<SnakeTextures>,
 ) {
-    // Handle game over
     if segments.0.len() > 1 {
         if let Some(head_pos) = head_positions.iter().next() {
             for segment_pos in segment_positions.iter() {
