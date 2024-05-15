@@ -1,21 +1,17 @@
+use bevy::prelude::*;
+use components::*;
+use systems::*;
+use constants::*;
+
 mod components;
 mod systems;
-
-use bevy::prelude::*;
-use systems::SnakeGamePlugin;
+mod constants;
 
 fn main() {
     App::new()
-        .insert_resource(Msaa::default())
-        .add_plugins(DefaultPlugins.set(WindowPlugin {
-            primary_window: Some(Window {
-                title: "Snake Game".to_string(),
-                resolution: (800.0, 600.0).into(),
-                resizable: false,
-                ..Default::default()
-            }),
-            ..default()
-        }))
-        .add_plugin(SnakeGamePlugin)
+        .add_plugins(DefaultPlugins)
+        .insert_resource(Score::default())
+        .add_startup_system(setup)
+        .add_systems(Update, (snake_movement, snake_eating, snake_growth, game_over, camera_follow))
         .run();
 }
