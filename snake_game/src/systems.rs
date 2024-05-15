@@ -3,6 +3,11 @@ use crate::components::*;
 use rand::Rng;
 
 const FOOD_COLOR: Color = Color::rgb(1.0, 0.0, 0.0); // Color for the food
+const GRID_SIZE: f32 = 32.0;
+const GRID_WIDTH: i32 = 25;
+const GRID_HEIGHT: i32 = 18;
+const SNAKE_SIZE: f32 = 32.0;
+const SNAKE_MOVEMENT_INTERVAL: f32 = 0.15;
 
 fn setup(
     mut commands: Commands,
@@ -17,7 +22,7 @@ fn setup(
     commands.insert_resource(SnakeMoveTimer(Timer::from_seconds(SNAKE_MOVEMENT_INTERVAL, TimerMode::Repeating)));
     commands.insert_resource(SnakeTextures { head: snake_head_handle.clone(), food: food_handle.clone() });
     commands.insert_resource(LastTailPosition::default());
-    commands.insert_resource(SnakeSegments(Vec::new()));
+    commands.insert_resource(SnakeSegments(vec![]));
 
     spawn_snake(&mut commands, snake_head_handle);
     spawn_food(&mut commands, food_handle);
@@ -61,12 +66,17 @@ pub struct SnakeGamePlugin;
 
 impl Plugin for SnakeGamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup)
-            .add_system(snake_movement)
-            .add_system(snake_eating)
-            .add_system(snake_growth)
-            .add_system(game_over)
-            .add_system(camera_follow);
+        app.add_systems(Startup, setup)
+            .add_systems(
+                Update,
+                (
+                    snake_movement,
+                    snake_eating,
+                    snake_growth,
+                    game_over,
+                    camera_follow,
+                )
+            );
     }
 }
 
@@ -107,13 +117,14 @@ fn snake_eating(
     food_positions: Query<(Entity, &Position), With<Food>>,
     head_positions: Query<(&Transform, &Position), With<SnakeHead>>,
     mut last_tail_position: ResMut<LastTailPosition>,
+    textures: Res<SnakeTextures>,
 ) {
-    for (head_transform, head_position) in head_positions.iter() {
+    for (_, head_position) in head_positions.iter() {
         for (entity, food_position) in food_positions.iter() {
             if head_position.x == food_position.x && head_position.y == food_position.y {
                 commands.entity(entity).despawn();
                 last_tail_position.0 = Some(*food_position);
-                spawn_food(&mut commands, commands.get_resource::<SnakeTextures>().unwrap().food.clone());
+                spawn_food(&mut commands, textures.food.clone());
             }
         }
     }

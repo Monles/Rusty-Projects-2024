@@ -1,37 +1,39 @@
 use bevy::prelude::*;
 
-#[derive(Component)]
-pub struct Food;
-
-#[derive(Component)]
-pub struct Position {
-    pub x: i32,
-    pub y: i32,
+pub struct SnakeHead;
+impl Component for SnakeHead {
+    type Storage = bevy::ecs::component::TableStorage;
 }
 
-#[derive(Component)]
-pub struct SnakeHead;
-
-#[derive(Component)]
 pub struct SnakeSegment;
+impl Component for SnakeSegment {
+    type Storage = bevy::ecs::component::TableStorage;
+}
 
-#[derive(Default, Resource)]
+pub struct Food;
+impl Component for Food {
+    type Storage = bevy::ecs::component::TableStorage;
+}
+
+#[derive(Default)]
 pub struct LastTailPosition(pub Option<Position>);
+impl Resource for LastTailPosition {}
 
-#[derive(Resource)]
 pub struct SnakeMoveTimer(pub Timer);
+impl Resource for SnakeMoveTimer {}
 
-#[derive(Resource)]
 pub struct SnakeTextures {
     pub head: Handle<Image>,
     pub food: Handle<Image>,
 }
+impl Resource for SnakeTextures {}
 
-#[derive(Resource)]
+#[derive(Default)]
 pub struct SnakeSegments(pub Vec<Entity>);
+impl Resource for SnakeSegments {}
 
-pub const SNAKE_MOVEMENT_INTERVAL: f32 = 0.3;
-pub const SNAKE_SIZE: f32 = 32.0; // Size for the snake and food sprites
-pub const GRID_SIZE: f32 = 32.0; // Each grid cell size
-pub const GRID_WIDTH: i32 = 25; // Number of cells horizontally
-pub const GRID_HEIGHT: i32 = 19; // Number of cells vertically
+#[derive(Component, Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub struct Position {
+    pub x: i32,
+    pub y: i32,
+}
