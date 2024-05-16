@@ -16,6 +16,6 @@ fn main() {
             }),
             ..default()
         }))
-        .add_plugin(SnakeGamePlugin)
+        .add_plugins(SnakeGamePlugin)
         .run();
 }

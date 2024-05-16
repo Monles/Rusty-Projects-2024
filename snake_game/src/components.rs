@@ -9,7 +9,7 @@ pub struct SnakeSegment;
 #[derive(Component)]
 pub struct Food;
 
-#[derive(Component, Clone, PartialEq)]
+#[derive(Component, Clone, PartialEq, Eq)]
 pub struct Position {
     pub x: i32,
     pub y: i32,
@@ -31,7 +31,7 @@ pub struct SnakeTextures {
 pub struct SnakeSegments(pub Vec<Entity>);
 
 #[derive(Resource, Default)]
-pub struct Score(pub i32);
+pub struct Score(pub u32);
 
 #[derive(Component)]
 pub struct ScoreText;

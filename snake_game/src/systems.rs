@@ -31,11 +31,8 @@ fn setup(
     commands.spawn(NodeBundle {
         style: Style {
             position_type: PositionType::Absolute,
-            position: UiRect {
-                left: Val::Px(10.0),
-                top: Val::Px(10.0),
-                ..Default::default()
-            },
+            top: Val::Px(10.0),
+            left: Val::Px(10.0),
             ..Default::default()
         },
         ..Default::default()
@@ -94,7 +91,7 @@ pub struct SnakeGamePlugin;
 
 impl Plugin for SnakeGamePlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup)
+        app.add_systems(Startup, setup)
             .add_systems(
                 Update,
                 (
